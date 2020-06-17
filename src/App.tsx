@@ -1,6 +1,6 @@
 import React from 'react'
 import { AuthProvider } from "./Auth"
-import { BrowserRouter as Router, Route } from "react-router-dom"
+import { HashRouter as Router, Route } from "react-router-dom"
 import Home from './components/Home'
 import Login from './components/Login'
 
