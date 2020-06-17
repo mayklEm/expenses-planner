@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import Entry from './Entry'
 import EntryForm from './EntryForm'
+import { AuthContext } from "../Auth"
+import { withRouter, Redirect } from "react-router"
 
 interface Props {
   
@@ -42,6 +44,12 @@ const Home = (props: Props) => {
   })
 
   console.log('sortedEntries', sortedEntries)
+
+  const { currentUser } = useContext(AuthContext)
+
+  if (!currentUser) {
+    return <Redirect to="/login" />
+  }
 
   return (
     <div>
@@ -117,4 +125,4 @@ const isNextMonth = (currentMonth: Date, newDate: Date) => {
   return new Date(newDate.getFullYear(), newDate.getMonth(), 1);
 }
 
-export default Home
+export default withRouter(Home)
