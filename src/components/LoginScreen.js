@@ -46,8 +46,7 @@ export default function LoginScreen() {
                         Sign in
                     </h2>
                 </div>
-                <form className="mt-8" action="#" method="POST">
-                    <input type="hidden" name="remember" defaultValue="true"/>
+                <form className="mt-8">
                     <div className="rounded-md shadow-sm">
                         <div>
                             <input aria-label="Email address" name="email" type="email" required
@@ -74,7 +73,10 @@ export default function LoginScreen() {
                     <div className="mt-6">
                         <button type="submit"
                                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
-                                onClick={() => handleLogin()}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleLogin()
+                                }}
                         >
                   <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                     <svg
