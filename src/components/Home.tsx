@@ -2,86 +2,94 @@ import React, { useState, useContext } from 'react'
 import Entry from './Entry'
 import EntryForm from './EntryForm'
 import { withRouter, Redirect } from "react-router"
+import useEntries from "../graphql/useEntries";
 
 interface Props {
   
 }
 
 interface iEntry {
+  _id: string,
   date: Date,
   title: String,
-  value: number
+  amount: number
 }
 
 const Home = (props: Props) => {
-  const initialEntries: Array<iEntry> = [
-    {
-      date: new Date("2020-02-16"),
-      title: "Entry 1",
-      value: -111
-    },
-    {
-      date: new Date("2020-03-20"),
-      title: "Entry 2",
-      value: -111
-    }
-  ]
-  const initial: number = 2000
-  const [balance, setBalance] = useState(initial)
-  const [entries, setEntries] = useState(initialEntries)
+  const { entries, loading } = useEntries();
+  console.log(entries);
 
-  let newBalance = balance
-
-  let currentMonth = new Date("2000-01-01")
-
-  const formatter = new Intl.DateTimeFormat('en', { month: 'long' })
-
-  const sortedEntries = entries.sort((a, b) => {
-    if (a.date > b.date) return 1;
-    if (a.date < b.date) return -1;
-    return 0;
-  })
-
-  console.log('sortedEntries', sortedEntries)
+  // const initialEntries: Array<iEntry> = [
+  //   {
+  //     date: new Date("2020-02-16"),
+  //     title: "Entry 1",
+  //     value: -111
+  //   },
+  //   {
+  //     date: new Date("2020-03-20"),
+  //     title: "Entry 2",
+  //     value: -111
+  //   }
+  // ]
+  // const initial: number = 2000
+  // const [balance, setBalance] = useState(initial)
+  // // const [entries, setEntries] = useState(initialEntries)
+  //
+  // let newBalance = balance
+  //
+  // let currentMonth = new Date("2000-01-01")
+  //
+  // const formatter = new Intl.DateTimeFormat('en', { month: 'long' })
+  //
+  // const sortedEntries = entries.sort((a, b) => {
+  //   if (a.date > b.date) return 1;
+  //   if (a.date < b.date) return -1;
+  //   return 0;
+  // })
+  //
+  // console.log('sortedEntries', sortedEntries)
 
 
     // return <Redirect to="/login" />
 
   return (
     <div>
-      <EntryForm
-          handleSubmit={(title, value) => {
-            const randomMonth = Math.floor(Math.random() * Math.floor(11)) + 1
-            console.log('randomMonth', randomMonth)
-            setEntries([...entries, {
-              date: new Date(`2020-${randomMonth}-20`),
-              title: title,
-              value: value
-            }])
-          }}
-        />
-        <textarea readOnly={true} value={JSON.stringify(entries)}></textarea>
-        <div className="container py-2 mt-4 mb-4">
-          {entries.sort((a, b) => {
-            if (a.date > b.date) return 1;
-            if (a.date < b.date) return -1;
-            return 0;
-          }).map((entry, index) => {
-            newBalance += entry.value
-            const nextMonth = isNextMonth(currentMonth, entry.date)
-            currentMonth = nextMonth ? nextMonth : currentMonth
+        {entries.map((entry: iEntry) =>
+            <Entry key={entry._id} title={entry.title} amount={entry.amount} balance={6666} />
+        )}
+      {/*<EntryForm*/}
+      {/*    handleSubmit={(title, value) => {*/}
+      {/*      const randomMonth = Math.floor(Math.random() * Math.floor(11)) + 1*/}
+      {/*      console.log('randomMonth', randomMonth)*/}
+      {/*      setEntries([...entries, {*/}
+      {/*        date: new Date(`2020-${randomMonth}-20`),*/}
+      {/*        title: title,*/}
+      {/*        value: value*/}
+      {/*      }])*/}
+      {/*    }}*/}
+      {/*  />*/}
+      {/*  <textarea readOnly={true} value={JSON.stringify(entries)}></textarea>*/}
+      {/*  <div className="container py-2 mt-4 mb-4">*/}
+      {/*    {entries.sort((a, b) => {*/}
+      {/*      if (a.date > b.date) return 1;*/}
+      {/*      if (a.date < b.date) return -1;*/}
+      {/*      return 0;*/}
+      {/*    }).map((entry, index) => {*/}
+      {/*      newBalance += entry.value*/}
+      {/*      const nextMonth = isNextMonth(currentMonth, entry.date)*/}
+      {/*      currentMonth = nextMonth ? nextMonth : currentMonth*/}
 
-            return (
-              <React.Fragment key={index}>
-                {nextMonth &&
-                  <MonthGroup title={formatter.format(nextMonth)}></MonthGroup>
-                }
+      {/*      return (*/}
+      {/*        <React.Fragment key={index}>*/}
+      {/*          {nextMonth &&*/}
+      {/*            <MonthGroup title={formatter.format(nextMonth)}></MonthGroup>*/}
+      {/*          }*/}
 
-                <Entry {...entry} balance={newBalance}></Entry>
-              </React.Fragment>
-            )
-          })}
-        </div>
+      {/*          <Entry {...entry} balance={newBalance}></Entry>*/}
+      {/*        </React.Fragment>*/}
+      {/*      )*/}
+      {/*    })}*/}
+      {/*  </div>*/}
     </div>
   )
 }

@@ -2,11 +2,11 @@ import React, { ReactElement } from 'react'
 
 interface Props {
   title: String,
-  value: number,
+  amount: number,
   balance: number
 }
 
-export default function Entry({ title, value, balance }: Props): ReactElement {
+export default function Entry({ title, amount, balance }: Props): ReactElement {
   return (
     <div className="row">
       <div className="col-2 d-flex py-2">
@@ -31,7 +31,7 @@ export default function Entry({ title, value, balance }: Props): ReactElement {
               <div className="text-muted">{title}</div>
             </div>
             <div className="col-3 p-2">
-              <div className="float-right text-muted">{value}</div>
+              <div className="float-right text-muted">{amount}</div>
             </div>
             <div className="col-3 p-2 border-left">
               <div className="text-right">{balance}</div>
