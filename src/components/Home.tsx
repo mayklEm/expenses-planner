@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react'
 import Entry from './Entry'
 import EntryForm from './EntryForm'
-import { AuthContext } from "../Auth"
 import { withRouter, Redirect } from "react-router"
 
 interface Props {
@@ -45,11 +44,8 @@ const Home = (props: Props) => {
 
   console.log('sortedEntries', sortedEntries)
 
-  const { currentUser } = useContext(AuthContext)
 
-  if (!currentUser) {
-    return <Redirect to="/login" />
-  }
+    // return <Redirect to="/login" />
 
   return (
     <div>
