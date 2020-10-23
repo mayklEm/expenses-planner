@@ -20,11 +20,11 @@ interface Props {
 const Home = (props: Props) => {
   const { setErrorStatusCode } = useContext(ErrorStatusContext)
   const [fetch, {loading, error, data }] = useLazyQuery(useEntries(), {
-    onCompleted: () => {
-      console.log('completed with data:', data);
+    onCompleted: (result) => {
+      console.log('completed with data:', result);
     },
-    onError: () => {
-      setErrorStatusCode(401);
+    onError: (error) => {
+      console.log(error);
     }
   });
 
