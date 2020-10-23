@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import * as Realm from "realm-web";
 
 const RealmAppContext = React.createContext();
@@ -34,7 +34,15 @@ export const RealmAppProvider = ({ appId, children }) => {
         setCurrentUser(app.currentUser);
     }
 
-    const wrapped = { ...app, currentUser, logIn, logOut };
+    function forceLogout() {
+        if (currentUser) {
+            currentUser.accessToken = null;
+            currentUser.refreshToken = null;
+            setCurrentUser(null);
+        }
+    }
+
+    const wrapped = { ...app, currentUser, logIn, logOut, forceLogout };
 
     return (
         <RealmAppContext.Provider value={wrapped}>

@@ -1,23 +1,36 @@
-import React, { useState, useContext } from 'react'
-import Entry from './Entry'
-import EntryForm from './EntryForm'
-import { withRouter, Redirect } from "react-router"
+import React, {useContext, useEffect} from 'react'
+// import Entry from './Entry'
+// import EntryForm from './EntryForm'
+import { withRouter } from "react-router"
 import useEntries from "../graphql/useEntries";
+import { useLazyQuery, gql } from '@apollo/client';
+import { ErrorStatusContext } from "./ErrorHandler";
 
 interface Props {
-  
+
 }
 
-interface iEntry {
-  _id: string,
-  date: Date,
-  title: String,
-  amount: number
-}
+// interface iEntry {
+//   _id: string,
+//   date: Date,
+//   title: String,
+//   amount: number
+// }
 
 const Home = (props: Props) => {
-  const { entries, loading } = useEntries();
-  console.log(entries);
+  const { setErrorStatusCode } = useContext(ErrorStatusContext)
+  const [fetch, {loading, error, data }] = useLazyQuery(useEntries(), {
+    onCompleted: () => {
+      console.log('completed with data:', data);
+    },
+    onError: () => {
+      setErrorStatusCode(401);
+    }
+  });
+
+  useEffect(() => {
+    fetch();
+  }, []);
 
   // const initialEntries: Array<iEntry> = [
   //   {
@@ -50,13 +63,12 @@ const Home = (props: Props) => {
   // console.log('sortedEntries', sortedEntries)
 
 
-    // return <Redirect to="/login" />
 
   return (
     <div>
-        {entries.map((entry: iEntry) =>
-            <Entry key={entry._id} title={entry.title} amount={entry.amount} balance={6666} />
-        )}
+        {/*{entries.map((entry: iEntry) =>*/}
+        {/*    <Entry key={entry._id} title={entry.title} amount={entry.amount} balance={6666} />*/}
+        {/*)}*/}
       {/*<EntryForm*/}
       {/*    handleSubmit={(title, value) => {*/}
       {/*      const randomMonth = Math.floor(Math.random() * Math.floor(11)) + 1*/}
@@ -98,35 +110,35 @@ interface iProps {
   title: String
 }
 
-const MonthGroup = ({ title }: iProps) => {
-  return (
-    <div className="row">
-
-      <div className="col-2 d-flex py-2">
-        <div className="float-right text-muted">{title}</div>
-      </div>
-
-
-      <div className="col-auto text-center flex-column d-none d-sm-flex">
-
-        <div className="row h-100">
-          <div className="col border-right">&nbsp;</div>
-          <div className="col">&nbsp;</div>
-        </div>
-      </div>
-
-      <div className="col-7 pb-2 pt-2">
-
-      </div>
-    </div>
-  )
-}
-
-const isNextMonth = (currentMonth: Date, newDate: Date) => {
-  if (currentMonth.getMonth() === newDate.getMonth() && currentMonth.getFullYear() === newDate.getFullYear()) {
-    return false;
-  }
-  return new Date(newDate.getFullYear(), newDate.getMonth(), 1);
-}
+// const MonthGroup = ({ title }: iProps) => {
+//   return (
+//     <div className="row">
+//
+//       <div className="col-2 d-flex py-2">
+//         <div className="float-right text-muted">{title}</div>
+//       </div>
+//
+//
+//       <div className="col-auto text-center flex-column d-none d-sm-flex">
+//
+//         <div className="row h-100">
+//           <div className="col border-right">&nbsp;</div>
+//           <div className="col">&nbsp;</div>
+//         </div>
+//       </div>
+//
+//       <div className="col-7 pb-2 pt-2">
+//
+//       </div>
+//     </div>
+//   )
+// }
+//
+// const isNextMonth = (currentMonth: Date, newDate: Date) => {
+//   if (currentMonth.getMonth() === newDate.getMonth() && currentMonth.getFullYear() === newDate.getFullYear()) {
+//     return false;
+//   }
+//   return new Date(newDate.getFullYear(), newDate.getMonth(), 1);
+// }
 
 export default withRouter(Home)
