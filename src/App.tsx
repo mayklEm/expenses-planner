@@ -7,6 +7,7 @@ import {RealmAppProvider} from "./RealmApp";
 import './App.css';
 import ErrorHandler from "./components/ErrorHandler";
 import PrivateRoute from "./components/PrivateRoute";
+import AddEntry from "./components/AddEntry";
 
 export const APP_ID = "expenses-planner-react-tcjrv";
 
@@ -18,6 +19,7 @@ function App() {
           <RealmApolloProvider>
             <div className="App">
               <PrivateRoute exact path="/" component={Home}/>
+              <PrivateRoute exact path="/entries/add" component={AddEntry}/>
               <Route exact path="/login" component={LoginScreen}/>
             </div>
           </RealmApolloProvider>
