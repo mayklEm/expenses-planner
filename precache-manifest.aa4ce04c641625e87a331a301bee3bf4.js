@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "5732c33ab1583603c0f998b767f288f5",
+    "revision": "d86b7ffa90575b50337716f70c8ca565",
     "url": "/expenses-planner/index.html"
   },
   {
-    "revision": "c061546cb3f15ce27c5c",
+    "revision": "83d0f1531060840d7350",
     "url": "/expenses-planner/static/css/2.af3c1da9.chunk.css"
   },
   {
-    "revision": "24ed3378c560738da8b9",
+    "revision": "007358bad5dbe0d25e1c",
     "url": "/expenses-planner/static/css/main.cf7f5c2a.chunk.css"
   },
   {
-    "revision": "c061546cb3f15ce27c5c",
-    "url": "/expenses-planner/static/js/2.c1de6206.chunk.js"
+    "revision": "83d0f1531060840d7350",
+    "url": "/expenses-planner/static/js/2.e7dbfb79.chunk.js"
   },
   {
     "revision": "8ea6376f8d2fa985b38daedb4b3ee218",
-    "url": "/expenses-planner/static/js/2.c1de6206.chunk.js.LICENSE.txt"
+    "url": "/expenses-planner/static/js/2.e7dbfb79.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "24ed3378c560738da8b9",
-    "url": "/expenses-planner/static/js/main.f45f1330.chunk.js"
+    "revision": "007358bad5dbe0d25e1c",
+    "url": "/expenses-planner/static/js/main.7d03511b.chunk.js"
   },
   {
     "revision": "3c36654eb3c925b33fd3",
