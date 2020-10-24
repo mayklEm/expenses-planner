@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react'
 // import Entry from './Entry'
 // import EntryForm from './EntryForm'
 import {withRouter} from "react-router"
-import useEntries from "../graphql/useEntries";
+import {ENTRIES} from "../graphql/useEntries";
 import {useLazyQuery, gql} from '@apollo/client';
 import dayjs from "dayjs";
 
@@ -12,7 +12,7 @@ interface Props {
 
 interface iEntry {
   _id: string,
-  date: Date,
+  date: string,
   title: String,
   type: String,
   amount: number,
@@ -22,11 +22,14 @@ interface iEntry {
 const Home = (props: Props) => {
   let balance = 10000;
   const [entries, setEntries] = useState([]);
+  const [recurringEntries, setRecurringEntries] = useState([]);
   const [generatedMonths, setGeneratedMonths] = useState<Array<dayjs.Dayjs>>([]);
-  const [fetch, {loading, error, data}] = useLazyQuery(useEntries(), {
+
+  const [fetch, {loading, error, data}] = useLazyQuery(ENTRIES, {
     onCompleted: (result) => {
       console.log('completed with data:', result);
       setEntries(result.entries);
+      setRecurringEntries(result.recurringEntries);
     },
     onError: (error) => {
       console.log(error);
@@ -83,7 +86,7 @@ const Home = (props: Props) => {
         return (
           <div key={month.format('MM-YYYY')}>
             {month.format('MMMM YYYY')}
-            {filterEntriesByDate(entries, month).map((entry: iEntry) => {
+            {entriesByDate(entries, recurringEntries, month).map((entry: iEntry) => {
               balance = entry.type === 'income' ? balance + entry.amount : balance - entry.amount;
               return (
                 <React.Fragment key={entry._id}>
@@ -134,10 +137,25 @@ const Home = (props: Props) => {
   )
 }
 
-const filterEntriesByDate = (entries: Array<iEntry>, date: dayjs.Dayjs) => {
-  return entries.filter((entry) => {
+const entriesByDate = (entries: Array<iEntry>, recurringEntries: Array<iEntry>, date: dayjs.Dayjs) => {
+  const filteredByDate = entries.filter((entry) => {
     return dayjs(entry.date).startOf('month').isSame(date.startOf('month'));
   });
+
+  const result = recurringEntries.map((entry) => {
+    const recurringDate = dayjs(entry.date).month(date.get('month')).year(date.get('year')).toISOString();
+    return {...entry, date: recurringDate}
+  });
+
+  return sortEntriesByDate(filteredByDate.concat(result));
+}
+
+const sortEntriesByDate = (entries: Array<iEntry>) => {
+  return entries.sort((a, b) => {
+    if (a.date > b.date) return 1;
+    if (a.date < b.date) return -1;
+    return 0;
+  })
 }
 
 interface iProps {
