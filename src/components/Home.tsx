@@ -1,27 +1,32 @@
-import React, {useContext, useEffect} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 // import Entry from './Entry'
 // import EntryForm from './EntryForm'
-import { withRouter } from "react-router"
+import {withRouter} from "react-router"
 import useEntries from "../graphql/useEntries";
-import { useLazyQuery, gql } from '@apollo/client';
-import { ErrorStatusContext } from "./ErrorHandler";
+import {useLazyQuery, gql} from '@apollo/client';
+import dayjs from "dayjs";
 
 interface Props {
 
 }
 
-// interface iEntry {
-//   _id: string,
-//   date: Date,
-//   title: String,
-//   amount: number
-// }
+interface iEntry {
+  _id: string,
+  date: Date,
+  title: String,
+  type: String,
+  amount: number,
+  is_recurring: boolean,
+}
 
 const Home = (props: Props) => {
-  const { setErrorStatusCode } = useContext(ErrorStatusContext)
-  const [fetch, {loading, error, data }] = useLazyQuery(useEntries(), {
+  let balance = 10000;
+  const [entries, setEntries] = useState([]);
+  const [generatedMonths, setGeneratedMonths] = useState<Array<dayjs.Dayjs>>([]);
+  const [fetch, {loading, error, data}] = useLazyQuery(useEntries(), {
     onCompleted: (result) => {
       console.log('completed with data:', result);
+      setEntries(result.entries);
     },
     onError: (error) => {
       console.log(error);
@@ -30,7 +35,15 @@ const Home = (props: Props) => {
 
   useEffect(() => {
     fetch();
+
+    let months = [];
+    for (let i = 0; i < 4; i++) {
+      months.push(dayjs().add(i, 'month').startOf('month'));
+    }
+    setGeneratedMonths(months);
+
   }, []);
+
 
   // const initialEntries: Array<iEntry> = [
   //   {
@@ -63,12 +76,27 @@ const Home = (props: Props) => {
   // console.log('sortedEntries', sortedEntries)
 
 
-
   return (
     <div>
-        {/*{entries.map((entry: iEntry) =>*/}
-        {/*    <Entry key={entry._id} title={entry.title} amount={entry.amount} balance={6666} />*/}
-        {/*)}*/}
+      balance: {balance}
+      {generatedMonths.map((month) => {
+        return (
+          <div key={month.format('MM-YYYY')}>
+            {month.format('MMMM YYYY')}
+            {filterEntriesByDate(entries, month).map((entry: iEntry) => {
+              balance = entry.type === 'income' ? balance + entry.amount : balance - entry.amount;
+              return (
+                <React.Fragment key={entry._id}>
+                  <div>
+                    {dayjs(entry.date).format('D.M.YYYY')} - {entry.title}: {entry.amount} (balance: {balance})
+                  </div>
+                </React.Fragment>
+              );
+            })}
+          </div>
+        );
+      })}
+
       {/*<EntryForm*/}
       {/*    handleSubmit={(title, value) => {*/}
       {/*      const randomMonth = Math.floor(Math.random() * Math.floor(11)) + 1*/}
@@ -104,6 +132,12 @@ const Home = (props: Props) => {
       {/*  </div>*/}
     </div>
   )
+}
+
+const filterEntriesByDate = (entries: Array<iEntry>, date: dayjs.Dayjs) => {
+  return entries.filter((entry) => {
+    return dayjs(entry.date).startOf('month').isSame(date.startOf('month'));
+  });
 }
 
 interface iProps {
