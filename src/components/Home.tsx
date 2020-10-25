@@ -51,116 +51,77 @@ const Home = (props: Props) => {
     setGeneratedMonths(months);
   }, [numberOfMonths]);
 
-
-  // const initialEntries: Array<iEntry> = [
-  //   {
-  //     date: new Date("2020-02-16"),
-  //     title: "Entry 1",
-  //     value: -111
-  //   },
-  //   {
-  //     date: new Date("2020-03-20"),
-  //     title: "Entry 2",
-  //     value: -111
-  //   }
-  // ]
-  // const initial: number = 2000
-  // const [balance, setBalance] = useState(initial)
-  // // const [entries, setEntries] = useState(initialEntries)
-  //
-  // let newBalance = balance
-  //
-  // let currentMonth = new Date("2000-01-01")
-  //
-  // const formatter = new Intl.DateTimeFormat('en', { month: 'long' })
-  //
-  // const sortedEntries = entries.sort((a, b) => {
-  //   if (a.date > b.date) return 1;
-  //   if (a.date < b.date) return -1;
-  //   return 0;
-  // })
-  //
-  // console.log('sortedEntries', sortedEntries)
-
-
   return (
-    <div>
-      <label>
-        Initial balance:
-        <input
-          name="balance"
-          value={initialBalance}
-          type="number"
-          onChange={(event) => {
-            setInitialBalance(parseInt(event.target.value) || initialBalance)}
-          }
-          className="border"
-        />
-      </label>
-      <label>
-        Number of months:
-        <input
-          name="months"
-          value={numberOfMonths}
-          min="1"
-          type="number"
-          onChange={(event) => {
-            setNumberOfMonths(parseInt(event.target.value) || numberOfMonths)
-          }}
-          className="border"
-        />
-      </label>
-      {generatedMonths.map((month) => {
-        return (
-          <div key={month.format('MM-YYYY')}>
-            {month.format('MMMM YYYY')}
-            {entriesByDate(entries, recurringEntries, month).map((entry: iEntry) => {
-              currentBalance = entry.type === 'income' ? currentBalance + entry.amount : currentBalance - entry.amount;
-              return (
-                <React.Fragment key={entry._id}>
-                  <div>
-                    {dayjs(entry.date).format('D.M.YYYY')} - {entry.title}: {entry.amount} (balance: {currentBalance})
-                  </div>
-                </React.Fragment>
-              );
-            })}
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 text-xs md:text-sm">
+      <div className="max-w-2xl w-full">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="col-span-1">
+            <label htmlFor="balance" className="block text-sm font-medium leading-5 text-gray-700">
+              Initial balance
+            </label>
+            <input
+              name="balance"
+              id="balance"
+              defaultValue={initialBalance}
+              type="number"
+              onChange={(event) => {
+                setInitialBalance(parseInt(event.target.value) || initialBalance)
+              }}
+              className="mt-1 form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+            />
           </div>
-        );
-      })}
+          <div className="col-span-1">
+            <label htmlFor="months" className="block text-sm font-medium leading-5 text-gray-700">
+              Number of months
+            </label>
+            <input
+              name="months"
+              id="months"
+              defaultValue={numberOfMonths}
+              min="1"
+              type="number"
+              onChange={(event) => {
+                setNumberOfMonths(parseInt(event.target.value) || numberOfMonths)
+              }}
+              className="mt-1 form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+            />
+          </div>
+        </div>
+        {generatedMonths.map((month) => {
+          return (
+            <React.Fragment key={month.format('MM-YYYY')}>
 
-      {/*<EntryForm*/}
-      {/*    handleSubmit={(title, value) => {*/}
-      {/*      const randomMonth = Math.floor(Math.random() * Math.floor(11)) + 1*/}
-      {/*      console.log('randomMonth', randomMonth)*/}
-      {/*      setEntries([...entries, {*/}
-      {/*        date: new Date(`2020-${randomMonth}-20`),*/}
-      {/*        title: title,*/}
-      {/*        value: value*/}
-      {/*      }])*/}
-      {/*    }}*/}
-      {/*  />*/}
-      {/*  <textarea readOnly={true} value={JSON.stringify(entries)}></textarea>*/}
-      {/*  <div className="container py-2 mt-4 mb-4">*/}
-      {/*    {entries.sort((a, b) => {*/}
-      {/*      if (a.date > b.date) return 1;*/}
-      {/*      if (a.date < b.date) return -1;*/}
-      {/*      return 0;*/}
-      {/*    }).map((entry, index) => {*/}
-      {/*      newBalance += entry.value*/}
-      {/*      const nextMonth = isNextMonth(currentMonth, entry.date)*/}
-      {/*      currentMonth = nextMonth ? nextMonth : currentMonth*/}
+              <div className="mt-8">
+                {month.format('MMMM YYYY')}
+              </div>
 
-      {/*      return (*/}
-      {/*        <React.Fragment key={index}>*/}
-      {/*          {nextMonth &&*/}
-      {/*            <MonthGroup title={formatter.format(nextMonth)}></MonthGroup>*/}
-      {/*          }*/}
+              <div className="grid grid-cols-12 gap-1">
+                {entriesByDate(entries, recurringEntries, month).map((entry: iEntry) => {
+                  currentBalance = entry.type === 'income' ? currentBalance + entry.amount : currentBalance - entry.amount;
+                  return (
+                    <React.Fragment key={entry._id}>
+                      <div className="col-span-2">
+                        {dayjs(entry.date).format('D.M.')}
+                      </div>
+                      <div className="col-span-6">
+                        {entry.title}
+                      </div>
+                      <div className="col-span-2">
+                        {entry.amount}
+                      </div>
+                      <div className="col-span-2">
+                        {currentBalance}
+                      </div>
 
-      {/*          <Entry {...entry} balance={newBalance}></Entry>*/}
-      {/*        </React.Fragment>*/}
-      {/*      )*/}
-      {/*    })}*/}
-      {/*  </div>*/}
+                    </React.Fragment>
+                  );
+                })}
+              </div>
+
+            </React.Fragment>
+          );
+        })}
+      </div>
     </div>
   )
 }
