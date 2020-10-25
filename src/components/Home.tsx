@@ -1,10 +1,17 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 // import Entry from './Entry'
-// import EntryForm from './EntryForm'
 import {withRouter} from "react-router"
 import {ENTRIES} from "../graphql/useEntries";
-import {useLazyQuery, gql} from '@apollo/client';
+import {useLazyQuery, gql, useMutation} from '@apollo/client';
 import dayjs from "dayjs";
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons'
+import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
+import {DELETE_ENTRY} from "../graphql/entryMutations";
+
+library.add(faTrashAlt);
+library.add(faPencilAlt);
 
 const classNames = require('classnames');
 
@@ -27,6 +34,8 @@ const Home = (props: Props) => {
   const [entries, setEntries] = useState([]);
   const [recurringEntries, setRecurringEntries] = useState([]);
   const [generatedMonths, setGeneratedMonths] = useState<Array<dayjs.Dayjs>>([]);
+  const [deleteEntry] = useMutation(DELETE_ENTRY);
+
 
   let currentBalance = initialBalance;
 
@@ -108,15 +117,38 @@ const Home = (props: Props) => {
                       <div className="col-span-6">
                         {entry.title}
                       </div>
-                      <div className={classNames("col-span-2", {
+                      <div className={classNames("col-span-2", "text-right", {
                         "text-red-500": entry.type === 'expense',
                         "text-green-500": entry.type === 'income'
                       })}>
                         {entry.type === 'expense' ? '-' : '+'}{entry.amount}
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-2 text-right">
                         {currentBalance}
                       </div>
+
+                      <div className="col-span-12">
+                        <button
+                          onClick={() => {
+                            deleteEntry({
+                              variables: {
+                                query: {_id: entry._id}
+                              }
+                            }).then(response => {
+                              console.log(response);
+                            });
+                          }}
+                          className="float-right border border-red-500 rounded-md py-1 px-2 ml-2 text-red-500"
+                        >
+                          <FontAwesomeIcon icon={["far", "trash-alt"]} /> Delete
+                        </button>
+                        <button
+                          className="float-right border border-indigo-500 rounded-md py-1 px-2 ml-2 text-indigo-500"
+                        >
+                          <FontAwesomeIcon icon={["fas", "pencil-alt"]} className="" /> Edit
+                        </button>
+                      </div>
+
 
                     </React.Fragment>
                   );
@@ -151,40 +183,5 @@ const sortEntriesByDate = (entries: Array<iEntry>) => {
     return 0;
   })
 }
-
-interface iProps {
-  title: String
-}
-
-// const MonthGroup = ({ title }: iProps) => {
-//   return (
-//     <div className="row">
-//
-//       <div className="col-2 d-flex py-2">
-//         <div className="float-right text-muted">{title}</div>
-//       </div>
-//
-//
-//       <div className="col-auto text-center flex-column d-none d-sm-flex">
-//
-//         <div className="row h-100">
-//           <div className="col border-right">&nbsp;</div>
-//           <div className="col">&nbsp;</div>
-//         </div>
-//       </div>
-//
-//       <div className="col-7 pb-2 pt-2">
-//
-//       </div>
-//     </div>
-//   )
-// }
-//
-// const isNextMonth = (currentMonth: Date, newDate: Date) => {
-//   if (currentMonth.getMonth() === newDate.getMonth() && currentMonth.getFullYear() === newDate.getFullYear()) {
-//     return false;
-//   }
-//   return new Date(newDate.getFullYear(), newDate.getMonth(), 1);
-// }
 
 export default withRouter(Home)
