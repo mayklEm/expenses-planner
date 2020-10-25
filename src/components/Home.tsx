@@ -20,10 +20,13 @@ interface iEntry {
 }
 
 const Home = (props: Props) => {
-  let balance = 10000;
+  const [initialBalance, setInitialBalance] = useState(10000);
+  const [numberOfMonths, setNumberOfMonths] = useState<number>(4);
   const [entries, setEntries] = useState([]);
   const [recurringEntries, setRecurringEntries] = useState([]);
   const [generatedMonths, setGeneratedMonths] = useState<Array<dayjs.Dayjs>>([]);
+
+  let currentBalance = initialBalance;
 
   const [fetch, {loading, error, data}] = useLazyQuery(ENTRIES, {
     onCompleted: (result) => {
@@ -38,14 +41,15 @@ const Home = (props: Props) => {
 
   useEffect(() => {
     fetch();
+  }, []);
 
+  useEffect(() => {
     let months = [];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < numberOfMonths; i++) {
       months.push(dayjs().add(i, 'month').startOf('month'));
     }
     setGeneratedMonths(months);
-
-  }, []);
+  }, [numberOfMonths]);
 
 
   // const initialEntries: Array<iEntry> = [
@@ -81,17 +85,41 @@ const Home = (props: Props) => {
 
   return (
     <div>
-      balance: {balance}
+      <label>
+        Initial balance:
+        <input
+          name="balance"
+          value={initialBalance}
+          type="number"
+          onChange={(event) => {
+            setInitialBalance(parseInt(event.target.value) || initialBalance)}
+          }
+          className="border"
+        />
+      </label>
+      <label>
+        Number of months:
+        <input
+          name="months"
+          value={numberOfMonths}
+          min="1"
+          type="number"
+          onChange={(event) => {
+            setNumberOfMonths(parseInt(event.target.value) || numberOfMonths)
+          }}
+          className="border"
+        />
+      </label>
       {generatedMonths.map((month) => {
         return (
           <div key={month.format('MM-YYYY')}>
             {month.format('MMMM YYYY')}
             {entriesByDate(entries, recurringEntries, month).map((entry: iEntry) => {
-              balance = entry.type === 'income' ? balance + entry.amount : balance - entry.amount;
+              currentBalance = entry.type === 'income' ? currentBalance + entry.amount : currentBalance - entry.amount;
               return (
                 <React.Fragment key={entry._id}>
                   <div>
-                    {dayjs(entry.date).format('D.M.YYYY')} - {entry.title}: {entry.amount} (balance: {balance})
+                    {dayjs(entry.date).format('D.M.YYYY')} - {entry.title}: {entry.amount} (balance: {currentBalance})
                   </div>
                 </React.Fragment>
               );
