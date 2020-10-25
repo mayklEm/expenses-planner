@@ -6,6 +6,8 @@ import {ENTRIES} from "../graphql/useEntries";
 import {useLazyQuery, gql} from '@apollo/client';
 import dayjs from "dayjs";
 
+const classNames = require('classnames');
+
 interface Props {
 
 }
@@ -106,8 +108,11 @@ const Home = (props: Props) => {
                       <div className="col-span-6">
                         {entry.title}
                       </div>
-                      <div className="col-span-2">
-                        {entry.amount}
+                      <div className={classNames("col-span-2", {
+                        "text-red-500": entry.type === 'expense',
+                        "text-green-500": entry.type === 'income'
+                      })}>
+                        {entry.type === 'expense' ? '-' : '+'}{entry.amount}
                       </div>
                       <div className="col-span-2">
                         {currentBalance}
