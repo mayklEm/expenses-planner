@@ -4,10 +4,10 @@ import {withRouter} from "react-router"
 import {ENTRIES} from "../graphql/useEntries";
 import {useLazyQuery, gql, useMutation} from '@apollo/client';
 import dayjs from "dayjs";
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons'
-import { faPencilAlt } from '@fortawesome/free-solid-svg-icons'
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTrashAlt} from '@fortawesome/free-regular-svg-icons'
+import {faPencilAlt} from '@fortawesome/free-solid-svg-icons'
 import {DELETE_ENTRY} from "../graphql/entryMutations";
 
 library.add(faTrashAlt);
@@ -63,7 +63,8 @@ const Home = (props: Props) => {
   }, [numberOfMonths]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 text-xs md:text-sm">
+    <div
+      className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 text-xs md:text-sm">
       <div className="max-w-2xl w-full">
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-1">
@@ -106,47 +107,52 @@ const Home = (props: Props) => {
                 {month.format('MMMM YYYY')}
               </div>
 
-              <div className="grid grid-cols-12 gap-1">
+              <div className="entries-container border rounded divide-y">
                 {entriesByDate(entries, recurringEntries, month).map((entry: iEntry) => {
                   currentBalance = entry.type === 'income' ? currentBalance + entry.amount : currentBalance - entry.amount;
                   return (
                     <React.Fragment key={entry._id}>
-                      <div className="col-span-2">
-                        {dayjs(entry.date).format('D.M.')}
-                      </div>
-                      <div className="col-span-6">
-                        {entry.title}
-                      </div>
-                      <div className={classNames("col-span-2", "text-right", {
-                        "text-red-500": entry.type === 'expense',
-                        "text-green-500": entry.type === 'income'
-                      })}>
-                        {entry.type === 'expense' ? '-' : '+'}{entry.amount}
-                      </div>
-                      <div className="col-span-2 text-right">
-                        {currentBalance}
-                      </div>
+                      <div className="p-2">
 
-                      <div className="col-span-12">
-                        <button
-                          onClick={() => {
-                            deleteEntry({
-                              variables: {
-                                query: {_id: entry._id}
-                              }
-                            }).then(response => {
-                              console.log(response);
-                            });
-                          }}
-                          className="float-right border border-red-500 rounded-md py-1 px-2 ml-2 text-red-500"
-                        >
-                          <FontAwesomeIcon icon={["far", "trash-alt"]} /> Delete
-                        </button>
-                        <button
-                          className="float-right border border-indigo-500 rounded-md py-1 px-2 ml-2 text-indigo-500"
-                        >
-                          <FontAwesomeIcon icon={["fas", "pencil-alt"]} className="" /> Edit
-                        </button>
+                        <div className="flex justify-between">
+                          <div className="w-2/12">
+                            {dayjs(entry.date).format('D.M.')}
+                          </div>
+                          <div className="w-6/12">
+                            {entry.title}
+                          </div>
+                          <div className={classNames("w-2/12", "text-right", {
+                            "text-red-500": entry.type === 'expense',
+                            "text-green-500": entry.type === 'income'
+                          })}>
+                            {entry.type === 'expense' ? '-' : '+'}{entry.amount}
+                          </div>
+                          <div className="w-2/12 text-right">
+                            {currentBalance}
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end space-x-2 text-xs mt-2">
+                          <button
+                            onClick={() => {
+                              deleteEntry({
+                                variables: {
+                                  query: {_id: entry._id}
+                                }
+                              }).then(response => {
+                                console.log(response);
+                              });
+                            }}
+                            className="border-b border-red-500 text-red-500"
+                          >
+                            <FontAwesomeIcon icon={["far", "trash-alt"]}/> Delete
+                          </button>
+                          <button
+                            className="border-b border-indigo-500 text-indigo-500"
+                          >
+                            <FontAwesomeIcon icon={["fas", "pencil-alt"]} className=""/> Edit
+                          </button>
+                        </div>
                       </div>
 
 
