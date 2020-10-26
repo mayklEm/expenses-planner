@@ -35,6 +35,7 @@ const Home = (props: Props) => {
   const [recurringEntries, setRecurringEntries] = useState([]);
   const [generatedMonths, setGeneratedMonths] = useState<Array<dayjs.Dayjs>>([]);
   const [deleteEntry] = useMutation(DELETE_ENTRY);
+  const [selectedEntry, setSelectedEntry] = useState('');
 
 
   let currentBalance = initialBalance;
@@ -112,7 +113,9 @@ const Home = (props: Props) => {
                   currentBalance = entry.type === 'income' ? currentBalance + entry.amount : currentBalance - entry.amount;
                   return (
                     <React.Fragment key={entry._id}>
-                      <div className="p-2">
+                      <div
+                        onClick={() => {setSelectedEntry(`${month.format('MM-YYYY')}:${entry._id}`)}}
+                        className="entry p-2">
 
                         <div className="flex justify-between">
                           <div className="w-2/12">
@@ -121,18 +124,20 @@ const Home = (props: Props) => {
                           <div className="w-6/12">
                             {entry.title}
                           </div>
-                          <div className={classNames("w-2/12", "text-right", {
+                          <div className={classNames("w-2/12", "text-right", "font-semibold", {
                             "text-red-500": entry.type === 'expense',
                             "text-green-500": entry.type === 'income'
                           })}>
                             {entry.type === 'expense' ? '-' : '+'}{entry.amount}
                           </div>
-                          <div className="w-2/12 text-right">
+                          <div className="w-2/12 text-right font-semibold">
                             {currentBalance}
                           </div>
                         </div>
 
-                        <div className="flex justify-end space-x-2 text-xs mt-2">
+                        <div className={classNames("flex justify-end space-x-2 text-xs mt-2", {
+                          hidden: selectedEntry !== `${month.format('MM-YYYY')}:${entry._id}`
+                        })}>
                           <button
                             onClick={() => {
                               deleteEntry({
