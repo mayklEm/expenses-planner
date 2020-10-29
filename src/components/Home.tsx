@@ -127,7 +127,7 @@ const Home = (props: Props) => {
                   variables: {
                     'query': {'_id': app.currentUser.customData.application},
                     'set': {
-                      'balance': initialBalance
+                      'balance': balanceInput.current.value
                     }
                   }
                 }).then(response => {
