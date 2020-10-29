@@ -101,6 +101,8 @@ const Home = (props: Props) => {
           </div>
         </div>
         {generatedMonths.map((month) => {
+          if (entriesByDate(entries, recurringEntries, month).length <= 0) return '';
+
           return (
             <React.Fragment key={month.format('MM-YYYY')}>
 
@@ -112,56 +114,58 @@ const Home = (props: Props) => {
                 {entriesByDate(entries, recurringEntries, month).map((entry: iEntry) => {
                   currentBalance = entry.type === 'income' ? currentBalance + entry.amount : currentBalance - entry.amount;
                   return (
-                    <React.Fragment key={entry._id}>
-                      <div
-                        onClick={() => {setSelectedEntry(`${month.format('MM-YYYY')}:${entry._id}`)}}
-                        className="entry p-2">
+                    <div
+                      key={entry._id}
+                      onClick={() => {
+                        setSelectedEntry(`${month.format('MM-YYYY')}:${entry._id}`)
+                      }}
+                      className="entry p-2">
 
-                        <div className="flex justify-between">
-                          <div className="w-2/12">
-                            {dayjs(entry.date).format('D.M.')}
-                          </div>
-                          <div className="w-6/12">
-                            {entry.title}
-                          </div>
-                          <div className={classNames("w-2/12", "text-right", "font-semibold", {
-                            "text-red-500": entry.type === 'expense',
-                            "text-green-500": entry.type === 'income'
-                          })}>
-                            {entry.type === 'expense' ? '-' : '+'}{entry.amount}
-                          </div>
-                          <div className="w-2/12 text-right font-semibold">
-                            {currentBalance}
-                          </div>
+                      <div className="flex justify-between">
+                        <div className="w-2/12">
+                          {dayjs(entry.date).format('D.M.')}
                         </div>
-
-                        <div className={classNames("flex justify-end space-x-2 text-xs mt-2", {
-                          hidden: selectedEntry !== `${month.format('MM-YYYY')}:${entry._id}`
+                        <div className="w-6/12">
+                          {entry.title}
+                        </div>
+                        <div className={classNames("w-2/12", "text-right", "font-semibold", {
+                          "text-red-500": entry.type === 'expense',
+                          "text-green-500": entry.type === 'income'
                         })}>
-                          <button
-                            onClick={() => {
-                              deleteEntry({
-                                variables: {
-                                  query: {_id: entry._id}
-                                }
-                              }).then(response => {
-                                console.log(response);
-                              });
-                            }}
-                            className="border-b border-red-500 text-red-500"
-                          >
-                            <FontAwesomeIcon icon={["far", "trash-alt"]}/> Delete
-                          </button>
-                          <button
-                            className="border-b border-indigo-500 text-indigo-500"
-                          >
-                            <FontAwesomeIcon icon={["fas", "pencil-alt"]} className=""/> Edit
-                          </button>
+                          {entry.type === 'expense' ? '-' : '+'}{entry.amount}
+                        </div>
+                        <div className="w-2/12 text-right font-semibold">
+                          {currentBalance}
                         </div>
                       </div>
 
 
-                    </React.Fragment>
+                      {selectedEntry &&
+                      <div className="flex justify-end space-x-2 text-xs mt-2">
+                        <button
+                          onClick={() => {
+                            deleteEntry({
+                              variables: {
+                                query: {_id: entry._id}
+                              }
+                            }).then(response => {
+                              console.log(response);
+                            });
+                          }}
+                          className="border-b border-red-500 text-red-500"
+                        >
+                          <FontAwesomeIcon icon={["far", "trash-alt"]}/> Delete
+                        </button>
+                        <button
+                          className="border-b border-indigo-500 text-indigo-500"
+                        >
+                          <FontAwesomeIcon icon={["fas", "pencil-alt"]} className=""/> Edit
+                        </button>
+                      </div>
+                      }
+                    </div>
+
+
                   );
                 })}
               </div>
@@ -184,7 +188,10 @@ const entriesByDate = (entries: Array<iEntry>, recurringEntries: Array<iEntry>, 
     return {...entry, date: recurringDate}
   });
 
-  return sortEntriesByDate(filteredByDate.concat(result));
+
+  return sortEntriesByDate(filteredByDate.concat(result).filter((entry) => {
+    return dayjs(entry.date).isAfter(dayjs())
+  }));
 }
 
 const sortEntriesByDate = (entries: Array<iEntry>) => {
