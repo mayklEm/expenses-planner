@@ -86,7 +86,7 @@ const Home = (props: Props) => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 text-xs md:text-sm">
+      className="min-h-screen flex justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 text-xs md:text-sm">
       <div className="max-w-2xl w-full">
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-1">
