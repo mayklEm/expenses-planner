@@ -9,6 +9,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons'
 import {faPencilAlt} from '@fortawesome/free-solid-svg-icons'
 import {DELETE_ENTRY} from "../graphql/entryMutations";
+import {useRealmApp} from "../RealmApp";
+import {GET_APPLICATION, UPDATE_APPLICATION} from "../graphql/application";
 
 library.add(faTrashAlt);
 library.add(faPencilAlt);
@@ -35,7 +37,10 @@ const Home = (props: Props) => {
   const [recurringEntries, setRecurringEntries] = useState([]);
   const [generatedMonths, setGeneratedMonths] = useState<Array<dayjs.Dayjs>>([]);
   const [deleteEntry] = useMutation(DELETE_ENTRY);
+  const [updateApplication] = useMutation(UPDATE_APPLICATION);
   const [selectedEntry, setSelectedEntry] = useState('');
+  const app = useRealmApp();
+  const balanceInput = React.useRef(document.createElement("input"))
 
 
   let currentBalance = initialBalance;
@@ -51,8 +56,24 @@ const Home = (props: Props) => {
     }
   });
 
+  const [getApplication] = useLazyQuery(GET_APPLICATION, {
+    variables: {
+      query: {
+        _id: app.currentUser.customData.application
+      }
+    },
+    onCompleted: (result) => {
+      setInitialBalance(result.application.balance);
+      balanceInput.current.value = result.application.balance;
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
+
   useEffect(() => {
     fetch();
+    getApplication();
   }, []);
 
   useEffect(() => {
@@ -73,13 +94,11 @@ const Home = (props: Props) => {
               Initial balance
             </label>
             <input
+              ref={balanceInput}
               name="balance"
               id="balance"
               defaultValue={initialBalance}
               type="number"
-              onChange={(event) => {
-                setInitialBalance(parseInt(event.target.value) || initialBalance)
-              }}
               className="mt-1 form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
             />
           </div>
@@ -98,6 +117,28 @@ const Home = (props: Props) => {
               }}
               className="mt-1 form-input block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
             />
+          </div>
+          <div className="col-span-2">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setInitialBalance(parseInt(balanceInput.current.value))
+                updateApplication({
+                  variables: {
+                    'query': {'_id': app.currentUser.customData.application},
+                    'set': {
+                      'balance': initialBalance
+                    }
+                  }
+                }).then(response => {
+                  console.log(response);
+                });
+              }}
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
+            >
+              Set
+            </button>
           </div>
         </div>
         {generatedMonths.map((month) => {
