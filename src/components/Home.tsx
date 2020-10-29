@@ -181,7 +181,7 @@ const Home = (props: Props) => {
                       </div>
 
 
-                      {selectedEntry &&
+                      {selectedEntry === `${month.format('MM-YYYY')}:${entry._id}` &&
                       <div className="flex justify-end space-x-2 text-xs mt-2">
                         <button
                           onClick={() => {
