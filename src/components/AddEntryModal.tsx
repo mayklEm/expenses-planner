@@ -4,11 +4,11 @@ import {useMutation} from "@apollo/client";
 import {ADD_ENTRY} from "../graphql/entryMutations";
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {faCircleNotch} from '@fortawesome/free-solid-svg-icons';
 
 const classNames = require('classnames');
 
-library.add(faSpinner);
+library.add(faCircleNotch);
 
 interface Props {
   setShowModal: Function,
@@ -157,9 +157,9 @@ const AddEntryModal = (props: Props) => {
                   })}
                 >
                   {loading &&
-                    <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                      <FontAwesomeIcon icon={["fas", "spinner"]}/>
-                    </svg>
+                    <span className="animate-spin h-5 w-5 mr-3">
+                      <FontAwesomeIcon icon={["fas", "circle-notch"]}/>
+                    </span>
                   }
                   Add
                 </button>
