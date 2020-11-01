@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 // import Entry from './Entry'
+import AddEntryModal from "./AddEntryModal";
 import {withRouter} from "react-router"
 import {ENTRIES} from "../graphql/useEntries";
 import {useLazyQuery, gql, useMutation} from '@apollo/client';
@@ -41,6 +42,7 @@ const Home = (props: Props) => {
   const [selectedEntry, setSelectedEntry] = useState('');
   const app = useRealmApp();
   const balanceInput = React.useRef(document.createElement("input"))
+  const [showModal, setShowModal] = useState(false)
 
 
   let currentBalance = initialBalance;
@@ -85,8 +87,16 @@ const Home = (props: Props) => {
   }, [numberOfMonths]);
 
   return (
+    <React.Fragment>
+      {showModal &&
+        <AddEntryModal
+         setShowModal={setShowModal}
+        />
+      }
+
     <div
-      className="min-h-screen flex justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 text-xs md:text-sm">
+      className="min-h-screen flex justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 text-xs md:text-sm"
+    >
       <div className="max-w-2xl w-full">
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-1">
@@ -138,6 +148,18 @@ const Home = (props: Props) => {
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
             >
               Set
+            </button>
+          </div>
+          <div className="col-span-2">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setShowModal(true);
+              }}
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
+            >
+              Add new entry
             </button>
           </div>
         </div>
@@ -215,7 +237,10 @@ const Home = (props: Props) => {
           );
         })}
       </div>
+
     </div>
+    </React.Fragment>
+
   )
 }
 
