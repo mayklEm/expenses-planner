@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 // import Entry from './Entry'
-import AddEntryModal from "./AddEntryModal";
+import EntryModal from "./EntryModal";
 import {withRouter} from "react-router"
 import {ENTRIES} from "../graphql/useEntries";
 import {useLazyQuery, gql, useMutation} from '@apollo/client';
@@ -12,6 +12,7 @@ import {faPencilAlt} from '@fortawesome/free-solid-svg-icons'
 import {DELETE_ENTRY} from "../graphql/entryMutations";
 import {useRealmApp} from "../RealmApp";
 import {GET_APPLICATION, UPDATE_APPLICATION} from "../graphql/application";
+import {iEntry} from "../types";
 
 library.add(faTrashAlt);
 library.add(faPencilAlt);
@@ -22,13 +23,9 @@ interface Props {
 
 }
 
-interface iEntry {
-  _id: string,
-  date: string,
-  title: String,
-  type: String,
-  amount: number,
-  is_recurring: boolean,
+interface iSelectedEntry {
+  entry: iEntry,
+  dateKey: string,
 }
 
 const Home = (props: Props) => {
@@ -39,7 +36,7 @@ const Home = (props: Props) => {
   const [generatedMonths, setGeneratedMonths] = useState<Array<dayjs.Dayjs>>([]);
   const [deleteEntry] = useMutation(DELETE_ENTRY);
   const [updateApplication] = useMutation(UPDATE_APPLICATION);
-  const [selectedEntry, setSelectedEntry] = useState('');
+  const [selectedEntry, setSelectedEntry] = useState<iSelectedEntry | undefined>(undefined);
   const app = useRealmApp();
   const balanceInput = React.useRef(document.createElement("input"))
   const [showModal, setShowModal] = useState(false)
@@ -86,11 +83,28 @@ const Home = (props: Props) => {
     setGeneratedMonths(months);
   }, [numberOfMonths]);
 
+  const handleOnEntryClick = (entry: iEntry, dateKey: string) => {
+    setSelectedEntry({
+      dateKey: dateKey,
+      entry: entry,
+    });
+  };
+
+  const handleOnEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setShowModal(true);
+  };
+
+  const isSelectedEntry = (key: string) => {
+    return selectedEntry && selectedEntry.dateKey === key;
+  };
+
   return (
     <React.Fragment>
       {showModal &&
-        <AddEntryModal
+        <EntryModal
          setShowModal={setShowModal}
+         entry={selectedEntry?.entry}
         />
       }
 
@@ -180,7 +194,7 @@ const Home = (props: Props) => {
                     <div
                       key={entry._id}
                       onClick={() => {
-                        setSelectedEntry(`${month.format('MM-YYYY')}:${entry._id}`)
+                        handleOnEntryClick(entry, `${month.format('MM-YYYY')}:${entry._id}`);
                       }}
                       className="entry p-2">
 
@@ -203,7 +217,7 @@ const Home = (props: Props) => {
                       </div>
 
 
-                      {selectedEntry === `${month.format('MM-YYYY')}:${entry._id}` &&
+                      {isSelectedEntry(`${month.format('MM-YYYY')}:${entry._id}`) &&
                       <div className="flex justify-end space-x-2 text-xs mt-2">
                         <button
                           onClick={() => {
@@ -220,6 +234,7 @@ const Home = (props: Props) => {
                           <FontAwesomeIcon icon={["far", "trash-alt"]}/> Delete
                         </button>
                         <button
+                          onClick={handleOnEditClick}
                           className="border-b border-indigo-500 text-indigo-500"
                         >
                           <FontAwesomeIcon icon={["fas", "pencil-alt"]} className=""/> Edit
