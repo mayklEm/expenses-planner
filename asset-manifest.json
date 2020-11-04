@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/expenses-planner/static/css/main.2e44196c.chunk.css",
-    "main.js": "/expenses-planner/static/js/main.13267d11.chunk.js",
-    "main.js.map": "/expenses-planner/static/js/main.13267d11.chunk.js.map",
+    "main.js": "/expenses-planner/static/js/main.dbe90884.chunk.js",
+    "main.js.map": "/expenses-planner/static/js/main.dbe90884.chunk.js.map",
     "runtime-main.js": "/expenses-planner/static/js/runtime-main.1196d5e2.js",
     "runtime-main.js.map": "/expenses-planner/static/js/runtime-main.1196d5e2.js.map",
-    "static/js/2.41e8b1ca.chunk.js": "/expenses-planner/static/js/2.41e8b1ca.chunk.js",
-    "static/js/2.41e8b1ca.chunk.js.map": "/expenses-planner/static/js/2.41e8b1ca.chunk.js.map",
+    "static/js/2.087f32ad.chunk.js": "/expenses-planner/static/js/2.087f32ad.chunk.js",
+    "static/js/2.087f32ad.chunk.js.map": "/expenses-planner/static/js/2.087f32ad.chunk.js.map",
     "index.html": "/expenses-planner/index.html",
     "static/css/main.2e44196c.chunk.css.map": "/expenses-planner/static/css/main.2e44196c.chunk.css.map",
-    "static/js/2.41e8b1ca.chunk.js.LICENSE.txt": "/expenses-planner/static/js/2.41e8b1ca.chunk.js.LICENSE.txt"
+    "static/js/2.087f32ad.chunk.js.LICENSE.txt": "/expenses-planner/static/js/2.087f32ad.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.1196d5e2.js",
-    "static/js/2.41e8b1ca.chunk.js",
+    "static/js/2.087f32ad.chunk.js",
     "static/css/main.2e44196c.chunk.css",
-    "static/js/main.13267d11.chunk.js"
+    "static/js/main.dbe90884.chunk.js"
   ]
 }
