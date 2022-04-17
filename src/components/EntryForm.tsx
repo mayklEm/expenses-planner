@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react'
 import {useMutation} from "@apollo/client";
-import {ADD_ENTRY} from "../graphql/entryMutations";
+import {ADD_ENTRY, UPDATE_ENTRY} from "../graphql/entryMutations";
 import {useRealmApp} from "../RealmApp";
 import {iEntry} from "../types";
 
@@ -22,6 +22,7 @@ const EntryForm = (props: Props) => {
   const [state, setState] = useState(initial);
 
   const [addEntryMutation] = useMutation(ADD_ENTRY);
+  const [updateEntryMutation] = useMutation(UPDATE_ENTRY);
 
   const app = useRealmApp();
 
@@ -54,7 +55,21 @@ const EntryForm = (props: Props) => {
   }
 
   const updateEntry = () => {
-
+    updateEntryMutation({
+      variables: {
+        query: {_id: props.entry?._id},
+        set: {
+          title: state.title,
+          date: state.date,
+          amount: state.amount
+        }
+      }
+    }).then(response => {
+      if (props.onSubmitted) {
+        props.onSubmitted();
+      }
+      console.log('updated entry:', response);
+    });
   }
 
   return (
